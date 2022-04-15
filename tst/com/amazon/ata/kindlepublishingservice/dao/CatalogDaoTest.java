@@ -1,10 +1,7 @@
 package com.amazon.ata.kindlepublishingservice.dao;
 
-import com.amazon.ata.recommendationsservice.types.BookGenre;
 import com.amazon.ata.kindlepublishingservice.dynamodb.models.CatalogItemVersion;
 import com.amazon.ata.kindlepublishingservice.exceptions.BookNotFoundException;
-import com.amazon.ata.kindlepublishingservice.publishing.KindleFormattedBook;
-
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
@@ -14,11 +11,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -125,5 +118,40 @@ public class CatalogDaoTest {
         CatalogItemVersion queriedItem = (CatalogItemVersion) requestCaptor.getValue().getHashKeyValues();
         assertEquals(bookId, queriedItem.getBookId(), "Expected query to look for provided bookId");
         assertEquals(1, requestCaptor.getValue().getLimit(), "Expected query to have a limit set");
+    }
+
+    @Test
+    public void removeBookFromCatalog_bookDoesNotExist_throwsException() {
+
+        //GIVEN
+        String invalidBookId = "notABookID";
+
+        when(dynamoDbMapper.query(eq(CatalogItemVersion.class), any(DynamoDBQueryExpression.class))).thenReturn(list);
+        when(list.isEmpty()).thenReturn(true);
+
+
+        //WHEN + THEN
+        assertThrows(BookNotFoundException.class, () -> catalogDao.removeBookFromCatalog(invalidBookId),
+                "Expected BookNotFoundException to be throw for an invalid bookId.");
+
+
+    }
+
+    @Test
+    public void removeBookFromCatalog_bookIsAlreadyInactive_throwsException() {
+
+        //GIVEN
+        String bookId = "book.123";
+        CatalogItemVersion item = new CatalogItemVersion();
+        item.setInactive(true);
+        item.setBookId(bookId);
+
+        when(dynamoDbMapper.query(eq(CatalogItemVersion.class), any(DynamoDBQueryExpression.class))).thenReturn(list);
+        when(list.isEmpty()).thenReturn(false);
+        when(list.get(0)).thenReturn(item);
+
+        //WHEN + THEN
+        assertThrows(BookNotFoundException.class, () -> catalogDao.removeBookFromCatalog(bookId),
+                "Expected BookNotFoundException to be thrown for an invalid bookId.");
     }
 }

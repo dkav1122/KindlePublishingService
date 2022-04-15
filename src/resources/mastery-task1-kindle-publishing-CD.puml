@@ -1,1 +1,96 @@
 PARTICIPANTS: use this file for creating the class diagram in mastery task 01
+@startuml
+
+class GetBookActivity {
+     - RecommendationsServiceClient: recommendationServiceClient
+     - CatalogDao: catalogDao
+     + execute(GetBookRequest): GetBookResponse
+}
+
+class GetPublishingStatusActivity {
+    + execute(GetPublishingStatusActivity): GetPublishingStatusResponse
+}
+
+class RemoveBookFromCatalogActivity {
+    + execute(RemoveBookFromCatalogRequest): RemoveBookFromCatalogResponse
+}
+
+class SubmitBookForPublishingActivity {
+    - PublishingStatusDao: publishingStatusDao
+    + execute(SubmitBookForPublishingRequest): SubmitBookForPublishingResponse
+}
+
+class RecommendationsServiceClient {
+    - RecommendationService: recommendationService;
+    + getBookRecommendations(BookGenre): List<BookRecommendation>
+}
+
+class CatalogDao {
+    - dynamoDbMapper: DynamoDBMapper
+    + getBookFromCatalog(String): CatalogItemVersion
+    - getLatestVersionOfBook(String): CatalogItemVersion
+}
+
+class PublishingStatusDao {
+    - String: ADDITIONAL_NOTES_PREFIX
+    - dynamoDbMapper: DynamoDBMapper
+    + setPublishingStatus(String, PublishingRecordStatus, String): PublishingStatusItem
+    + setPublishingStatus(String, PublishingRecordStatus, String, String): PublishingStatusItem
+}
+
+class CatalogItemVersion {
+
+    -  @DynamoDBHashKey bookId: String
+
+    -   @DynamoDBRangeKey version: int
+    - inactive: boolean
+    - title: String
+    - author: String
+    - text: String
+    - genre: BookGenre
+}
+
+class PublishingStatusItem {
+
+    - @DynamoDBHashKey publishingRecordId: String
+
+    - @DynamoDBRangeKey status: PublishingRecordStatus
+    - statusMessage: String
+    - bookId: String
+}
+
+class BookNotFoundException {
+    - long: serialVersionUID
+}
+
+class PublishingStatusNotFoundException {
+    - long: serialVersionUID
+}
+
+
+
+
+GetBookActivity *-- CatalogDao
+GetBookActivity *-- RecommendationsServiceClient
+SubmitBookForPublishingActivity *-- PublishingStatusDao
+CatalogItemVersion -- CatalogDao
+PublishingStatusItem -- PublishingStatusDao
+CatalogDao -- BookNotFoundException
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@enduml
