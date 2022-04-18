@@ -55,7 +55,7 @@ public class CatalogDao {
         return results.get(0);
     }
 
-    public void removeBookFromCatalog(String bookId) {
+    public CatalogItemVersion removeBookFromCatalog(String bookId) {
         CatalogItemVersion bookToSoftDelete;
         try {
            bookToSoftDelete =  getBookFromCatalog(bookId);
@@ -64,12 +64,23 @@ public class CatalogDao {
         }
 
         bookToSoftDelete.setInactive(true);
-        saveCatalogItemVersion(bookToSoftDelete);
+        return saveCatalogItemVersion(bookToSoftDelete);
 
     }
 
-    private void saveCatalogItemVersion(CatalogItemVersion book) {
+    private CatalogItemVersion saveCatalogItemVersion(CatalogItemVersion book) {
         dynamoDbMapper.save(book);
+        return book;
 
+    }
+
+    public void validateBookExists(String bookId) {
+        CatalogItemVersion book;
+
+        book = dynamoDbMapper.load(CatalogItemVersion.class, bookId);
+
+        if(book == null) {
+            throw new BookNotFoundException("This book does not and has never existed");
+        }
     }
 }

@@ -130,7 +130,9 @@ public class CatalogDaoTest {
         when(list.isEmpty()).thenReturn(true);
 
 
+
         //WHEN + THEN
+
         assertThrows(BookNotFoundException.class, () -> catalogDao.removeBookFromCatalog(invalidBookId),
                 "Expected BookNotFoundException to be throw for an invalid bookId.");
 
@@ -145,6 +147,7 @@ public class CatalogDaoTest {
         CatalogItemVersion item = new CatalogItemVersion();
         item.setInactive(true);
         item.setBookId(bookId);
+        ArgumentCaptor<DynamoDBQueryExpression> requestCaptor = ArgumentCaptor.forClass(DynamoDBQueryExpression.class);
 
         when(dynamoDbMapper.query(eq(CatalogItemVersion.class), any(DynamoDBQueryExpression.class))).thenReturn(list);
         when(list.isEmpty()).thenReturn(false);
@@ -154,4 +157,29 @@ public class CatalogDaoTest {
         assertThrows(BookNotFoundException.class, () -> catalogDao.removeBookFromCatalog(bookId),
                 "Expected BookNotFoundException to be thrown for an invalid bookId.");
     }
+
+    @Test
+    public void removeBookFromCatalog_bookIsActive_DeletedBookIsSaved() {
+        //GIVEN
+        String bookId = "book.123";
+        CatalogItemVersion item = new CatalogItemVersion();
+        item.setInactive(false);
+        item.setBookId(bookId);
+        item.setVersion(2);
+
+        when(dynamoDbMapper.query(eq(CatalogItemVersion.class), any(DynamoDBQueryExpression.class))).thenReturn(list);
+        when(list.isEmpty()).thenReturn(false);
+        when(list.get(0)).thenReturn(item);
+
+        //WHEN
+        CatalogItemVersion bookToDelete = catalogDao.removeBookFromCatalog(bookId);
+
+        verify(dynamoDbMapper).save(item);
+        assertTrue(item.isInactive(), "Expected item isInactive to be set to [true] but is: " + item.isInactive());
+
+    }
+
+
+
+
 }

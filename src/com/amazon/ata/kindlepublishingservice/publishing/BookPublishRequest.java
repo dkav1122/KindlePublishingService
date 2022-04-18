@@ -2,6 +2,8 @@ package com.amazon.ata.kindlepublishingservice.publishing;
 
 import com.amazon.ata.recommendationsservice.types.BookGenre;
 
+import javax.inject.Inject;
+
 /**
  * Class representing a book publish request object.
  */
@@ -13,6 +15,7 @@ public final class BookPublishRequest {
     private final String author;
     private final String text;
     private final BookGenre genre;
+
 
     private BookPublishRequest(Builder builder) {
         this.publishingRecordId = builder.publishingRecordId;
@@ -150,6 +153,7 @@ public final class BookPublishRequest {
          *
          * @return a BookPublishRequest with parameters of this Builder.
          */
+        @Inject
         public BookPublishRequest build() {
             return new BookPublishRequest(this);
         }
