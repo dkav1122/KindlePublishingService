@@ -58,7 +58,7 @@ public class CatalogDao {
     public CatalogItemVersion removeBookFromCatalog(String bookId) {
         CatalogItemVersion bookToSoftDelete;
         try {
-           bookToSoftDelete =  getBookFromCatalog(bookId);
+           bookToSoftDelete =  getLatestVersionOfBook(bookId);
         } catch (BookNotFoundException exception) {
             throw new BookNotFoundException("Book Id: " + bookId + " does not exist", exception);
         }
