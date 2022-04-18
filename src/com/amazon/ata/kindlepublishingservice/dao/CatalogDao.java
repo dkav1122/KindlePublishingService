@@ -77,7 +77,7 @@ public class CatalogDao {
     public void validateBookExists(String bookId) {
         CatalogItemVersion book;
 
-        book = dynamoDbMapper.load(CatalogItemVersion.class, bookId);
+        book = this.getLatestVersionOfBook(bookId);
 
         if(book == null) {
             throw new BookNotFoundException("This book does not and has never existed");
