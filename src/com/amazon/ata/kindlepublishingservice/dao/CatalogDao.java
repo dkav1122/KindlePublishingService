@@ -57,16 +57,31 @@ public class CatalogDao {
 
     public CatalogItemVersion removeBookFromCatalog(String bookId) {
         CatalogItemVersion bookToSoftDelete;
-        try {
-           bookToSoftDelete =  getLatestVersionOfBook(bookId);
-        } catch (BookNotFoundException exception) {
-            throw new BookNotFoundException("Book Id: " + bookId + " does not exist", exception);
+
+        bookToSoftDelete =  getLatestVersionOfBook(bookId);
+
+        if(bookToSoftDelete == null || bookToSoftDelete.isInactive()) {
+            throw new BookNotFoundException("Book with id: " + bookId + "has never existed");
+        }
+
+        bookToSoftDelete.setInactive(true);
+        return saveCatalogItemVersion(bookToSoftDelete);
+    }
+
+    public CatalogItemVersion removeActiveOrInactiveBookFromCatalog(String bookId) {
+        CatalogItemVersion bookToSoftDelete;
+
+        bookToSoftDelete =  getLatestVersionOfBook(bookId);
+
+        if(bookToSoftDelete == null) {
+            throw new BookNotFoundException("Book with id: " + bookId + "has never existed");
         }
 
         bookToSoftDelete.setInactive(true);
         return saveCatalogItemVersion(bookToSoftDelete);
 
     }
+
 
     private CatalogItemVersion saveCatalogItemVersion(CatalogItemVersion book) {
         dynamoDbMapper.save(book);

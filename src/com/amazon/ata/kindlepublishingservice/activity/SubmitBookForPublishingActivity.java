@@ -61,7 +61,8 @@ public class SubmitBookForPublishingActivity {
             }
 
             //mark this version inactive
-            catalogDao.removeBookFromCatalog(bookId);
+
+            catalogDao.removeActiveOrInactiveBookFromCatalog(bookId);
         }
 
         final BookPublishRequest bookPublishRequest = BookPublishRequestConverter.toBookPublishRequest(request);

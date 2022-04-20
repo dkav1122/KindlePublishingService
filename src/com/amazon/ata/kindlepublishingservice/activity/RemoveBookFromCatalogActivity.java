@@ -1,6 +1,7 @@
 package com.amazon.ata.kindlepublishingservice.activity;
 
 import com.amazon.ata.kindlepublishingservice.dao.CatalogDao;
+import com.amazon.ata.kindlepublishingservice.exceptions.BookNotFoundException;
 import com.amazon.ata.kindlepublishingservice.models.requests.RemoveBookFromCatalogRequest;
 import com.amazon.ata.kindlepublishingservice.models.response.RemoveBookFromCatalogResponse;
 
@@ -18,7 +19,12 @@ public class RemoveBookFromCatalogActivity {
 
     public RemoveBookFromCatalogResponse execute(RemoveBookFromCatalogRequest removeBookFromCatalogRequest) {
         String bookIdToRemove = removeBookFromCatalogRequest.getBookId();
-        catalogDao.removeBookFromCatalog(bookIdToRemove);
+
+        try {
+            catalogDao.removeBookFromCatalog(bookIdToRemove);
+        } catch (BookNotFoundException e) {
+            throw new BookNotFoundException("Book for id:" + bookIdToRemove + "not found");
+        }
 
         return new RemoveBookFromCatalogResponse();
 
