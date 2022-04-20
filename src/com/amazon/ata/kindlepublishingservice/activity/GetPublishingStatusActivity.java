@@ -22,12 +22,12 @@ public class GetPublishingStatusActivity {
 
     public GetPublishingStatusResponse execute(GetPublishingStatusRequest publishingStatusRequest) {
 
-        String publishingStatusId = publishingStatusRequest.getPublishingRecordId();
+        String publishingRecordId = publishingStatusRequest.getPublishingRecordId();
 
         List<PublishingStatusItem> publishingStatusItems;
 
         try {
-            publishingStatusItems = publishingStatusDao.getPublishingStatuses(publishingStatusId);
+            publishingStatusItems = publishingStatusDao.getPublishingStatuses(publishingRecordId);
         } catch (PublishingStatusNotFoundException e) {
             throw new PublishingStatusNotFoundException("Publishing status not found", e);
         }
@@ -40,3 +40,4 @@ public class GetPublishingStatusActivity {
                 .build();
     }
 }
+
