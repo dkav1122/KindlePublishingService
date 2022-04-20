@@ -5,6 +5,8 @@ import com.amazon.ata.kindlepublishingservice.enums.PublishingRecordStatus;
 import com.amazon.ata.kindlepublishingservice.exceptions.PublishingStatusNotFoundException;
 import com.amazon.ata.kindlepublishingservice.utils.KindlePublishingUtils;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
+import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.inject.Inject;
@@ -78,20 +80,20 @@ public class PublishingStatusDao {
 
     public List<PublishingStatusItem> getPublishingStatuses(String publishingRecordId) {
 
-        throw new PublishingStatusNotFoundException("test");
 
-//        PublishingStatusItem publishingStatusItem = new PublishingStatusItem();
-//        publishingStatusItem.setPublishingRecordId(publishingRecordId);
-//
-//        DynamoDBQueryExpression<PublishingStatusItem> queryExpression = new DynamoDBQueryExpression<PublishingStatusItem>()
-//                .withHashKeyValues(publishingStatusItem);
-//
-//        PaginatedQueryList<PublishingStatusItem> statusItemList = dynamoDbMapper.query(PublishingStatusItem.class, queryExpression);
-//
-//        if(statusItemList.isEmpty()) {
-//            throw new PublishingStatusNotFoundException("No publishing statuses found for recordId: " + publishingRecordId);
-//        }
-//
-//        return statusItemList;
+
+        PublishingStatusItem publishingStatusItem = new PublishingStatusItem();
+        publishingStatusItem.setPublishingRecordId(publishingRecordId);
+
+        DynamoDBQueryExpression<PublishingStatusItem> queryExpression = new DynamoDBQueryExpression<PublishingStatusItem>()
+                .withHashKeyValues(publishingStatusItem);
+
+        PaginatedQueryList<PublishingStatusItem> statusItemList = dynamoDbMapper.query(PublishingStatusItem.class, queryExpression);
+
+        if(statusItemList.isEmpty()) {
+            throw new PublishingStatusNotFoundException("No publishing statuses found for recordId: " + publishingRecordId);
+        }
+
+        return statusItemList;
     }
 }
