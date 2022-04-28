@@ -4,10 +4,10 @@ import com.google.common.annotations.VisibleForTesting;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Class responsible for executing publishing tasks. The publisher is created in an off state. A call to start will
@@ -20,7 +20,7 @@ public class BookPublisher {
 
     private final ScheduledExecutorService scheduledExecutorService;
     private final Runnable publishTask;
-    private boolean isRunning;
+    private boolean isRunning;  //initialized to an off state
 
     /**
      * Instantiates a new BookPublisher object.
@@ -43,6 +43,7 @@ public class BookPublisher {
             return;
         }
         isRunning = true;
+        //calls Book Publish task run()
         scheduledExecutorService.scheduleWithFixedDelay(publishTask, 0, 1, TimeUnit.SECONDS);
     }
 

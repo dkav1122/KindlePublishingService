@@ -24,4 +24,5 @@ public interface ApplicationComponent {
     SubmitBookForPublishingActivity provideSubmitBookForPublishingActivity();
 
     ATAKindlePublishingServiceManager provideATAKindlePublishingServiceManager();
+
 }
