@@ -8,7 +8,7 @@ import com.amazon.ata.kindlepublishingservice.exceptions.BookNotFoundException;
 
 import javax.inject.Inject;
 
-public class BookPublishTask implements Runnable {
+public final class BookPublishTask implements Runnable {
 
     //make final
     private final BookPublishRequestManager bookPublishRequestManager;
@@ -23,6 +23,8 @@ public class BookPublishTask implements Runnable {
     }
 
 
+
+    @Override
     public void run() {
 
 
@@ -44,6 +46,7 @@ public class BookPublishTask implements Runnable {
             //call to catalog Dao to add or update existing book
             try {
                 CatalogItemVersion catalogItemVersion = catalogDao.createOrUpdateBook(kindleFormattedBook);
+                bookId = catalogItemVersion.getBookId();
             } catch (BookNotFoundException e) {
                 publishingStatusDao.setPublishingStatus(bookRecordId, PublishingRecordStatus.FAILED, bookId, "Book to update does not exist");
             }
@@ -52,7 +55,7 @@ public class BookPublishTask implements Runnable {
             publishingStatusDao.setPublishingStatus(bookRecordId, PublishingRecordStatus.FAILED, bookId, "Exception during processing");
         }
 
-        publishingStatusDao.setPublishingStatus(bookRecordId, PublishingRecordStatus.SUCCESSFUL, bookId);
+        publishingStatusDao.setPublishingStatus(bookRecordId, PublishingRecordStatus.SUCCESSFUL, bookId );
 
     }
 

@@ -128,8 +128,11 @@ public class CatalogDao {
         catalogItemVersion.setText(book.getText());
         catalogItemVersion.setTitle(book.getTitle());
 
-        catalogItemVersion = saveCatalogItemVersion(catalogItemVersion);
+        saveCatalogItemVersion(catalogItemVersion);
+
+
         return catalogItemVersion;
+       
     }
 
 
@@ -146,7 +149,16 @@ public class CatalogDao {
 
         //update catalog item version by 1
         int currentVersion = catalogItemVersion.getVersion();
-        catalogItemVersion.setVersion(currentVersion + 1);
+
+        catalogItemVersion.setVersion(catalogItemVersion.getVersion() + 1);
+        catalogItemVersion.setBookId(catalogItemVersion.getBookId());
+        catalogItemVersion.setAuthor(catalogItemVersion.getAuthor());
+        catalogItemVersion.setInactive(false);
+        catalogItemVersion.setTitle(catalogItemVersion.getTitle());
+        catalogItemVersion.setText(catalogItemVersion.getText());
+        catalogItemVersion.setGenre(catalogItemVersion.getGenre());
+
+
 
         //save updated catalog item to data store
        catalogItemVersion = saveCatalogItemVersion(catalogItemVersion);
